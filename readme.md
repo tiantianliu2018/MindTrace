@@ -22,6 +22,7 @@ MindTrace 想做的是把两者结合起来：
 - 输入一段日记内容，返回情绪、强度、主题和简短洞察
 - 将日记内容和分析结果保存到 SQLite 数据库
 - 按日期范围生成阶段性情绪总结
+- 提供可直接使用的 Web 首页，支持记录、回顾与总结
 - 使用 `.env` 配置 OpenAI API 信息
 - 通过 Swagger 文档快速调试接口
 
@@ -113,6 +114,7 @@ uvicorn app.main:app --reload
 
 启动后访问：
 
+- Web UI: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 - Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
@@ -211,3 +213,11 @@ uvicorn app.main:app --reload
 Created by `tiantianliu`
 
 如果你也对 AI、情绪记录或自我追踪产品感兴趣，欢迎关注这个项目的后续迭代。
+
+## AI Build Note
+
+这个项目当前版本完全由 AI 协作编写完成。
+
+- AI 工具：OpenAI Codex
+- 底层大模型：GPT-5
+- 协作方式：由开发者提出需求、方向与验收预期，AI 负责完成代码实现、调试、文档编写与迭代
