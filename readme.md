@@ -21,6 +21,7 @@ MindTrace 想做的是把两者结合起来：
 - 通过 FastAPI 提供日记分析与查询接口
 - 输入一段日记内容，返回情绪、强度、主题和简短洞察
 - 将日记内容和分析结果保存到 SQLite 数据库
+- 按日期范围生成阶段性情绪总结
 - 使用 `.env` 配置 OpenAI API 信息
 - 通过 Swagger 文档快速调试接口
 
@@ -156,6 +157,37 @@ uvicorn app.main:app --reload
       "created_at": "2026-04-24T21:30:00"
     }
   ]
+}
+```
+
+### Summary Query
+
+支持两种方式：
+
+1. 自定义日期范围
+
+`GET /api/diary/summary?start_date=2026-04-20&end_date=2026-04-26`
+
+2. 快捷周期模式
+
+`GET /api/diary/summary?period=week&anchor_date=2026-04-24`
+
+或
+
+`GET /api/diary/summary?period=month&anchor_date=2026-04-24`
+
+```json
+{
+  "start_date": "2026-04-20",
+  "end_date": "2026-04-26",
+  "total_entries": 5,
+  "average_intensity": 0.56,
+  "top_themes": ["项目推进", "压力", "成就感"],
+  "dominant_emotions": ["mixed", "anxious"],
+  "summary": "这一阶段的情绪整体呈现出在压力中逐步建立掌控感的特点。",
+  "trend": "情绪从任务压力主导，逐渐转向更稳定和有信心的状态。",
+  "highlights": ["完成关键接口联调", "数据库接入稳定", "对项目方向更清晰"],
+  "suggestion": "可以继续保持连续记录，特别留意哪些具体进展最能帮助你缓解焦虑。"
 }
 ```
 
