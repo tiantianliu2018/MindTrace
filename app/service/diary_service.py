@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.models.diary import DiaryEntry
 from app.schemas.diary import AnalysisResponse, DiaryListResponse, DiaryRequest, DiarySummaryResponse
-from app.service.ai_service import analyze_text, summarize_diaries
+from app.service.ai_service import analyze_text, get_emotion_metadata, summarize_diaries
 
 
 def resolve_summary_range(
@@ -41,10 +41,14 @@ def resolve_summary_range(
 
 
 def _to_response(entry: DiaryEntry) -> AnalysisResponse:
+    emotion_meta = get_emotion_metadata(entry.emotion)
     return AnalysisResponse(
         id=entry.id,
         date=entry.entry_date,
         emotion=entry.emotion,
+        emotion_group=emotion_meta["group"],
+        emotion_valence=emotion_meta["valence"],
+        emotion_energy=emotion_meta["energy"],
         intensity=entry.intensity,
         themes=json.loads(entry.themes),
         insight=entry.insight,

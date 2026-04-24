@@ -250,6 +250,12 @@ button:disabled {
   font-size: 0.95rem;
 }
 
+.analysis-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
 .emotion-pill {
   display: inline-flex;
   align-items: center;

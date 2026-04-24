@@ -2,6 +2,9 @@ type AnalysisResponse = {
   id: number;
   date: string;
   emotion: string;
+  emotion_group: string;
+  emotion_valence: string;
+  emotion_energy: string;
   intensity: number;
   themes: string[];
   insight: string;
@@ -40,6 +43,7 @@ const analysisIntensityText = document.querySelector<HTMLElement>("#analysis-int
 const analysisIntensityBar = document.querySelector<HTMLElement>("#analysis-intensity-bar");
 const analysisThemes = document.querySelector<HTMLElement>("#analysis-themes");
 const analysisInsight = document.querySelector<HTMLElement>("#analysis-insight");
+const analysisMeta = document.querySelector<HTMLElement>("#analysis-meta");
 
 const summaryMode = document.querySelector<HTMLSelectElement>("#summary-mode");
 const summaryAnchorDate = document.querySelector<HTMLInputElement>("#summary-anchor-date");
@@ -110,6 +114,10 @@ function renderAnalysis(item: AnalysisResponse) {
   assertElement(analysisCard, "analysis-card").classList.remove("hidden");
   assertElement(analysisDate, "analysis-date").textContent = formatDate(item.date);
   assertElement(analysisEmotion, "analysis-emotion").textContent = item.emotion;
+  assertElement(
+    analysisMeta,
+    "analysis-meta",
+  ).textContent = `${item.emotion_group} / ${item.emotion_valence} / ${item.emotion_energy}`;
   assertElement(analysisIntensityText, "analysis-intensity-text").textContent = item.intensity.toFixed(2);
   assertElement(analysisIntensityBar, "analysis-intensity-bar").style.width = `${Math.max(
     0,
@@ -136,6 +144,7 @@ function renderHistory(items: AnalysisResponse[]) {
         <div class="history-date">${formatDate(item.date)}</div>
         <span class="emotion-pill">${item.emotion}</span>
       </div>
+      <div class="history-date">${item.emotion_group} / ${item.emotion_energy}</div>
       <div class="theme-list">${item.themes.map((theme) => `<span class="theme-chip">${theme}</span>`).join("")}</div>
       <p class="history-insight">${item.insight}</p>
     `;

@@ -13,6 +13,7 @@ const analysisIntensityText = document.querySelector("#analysis-intensity-text")
 const analysisIntensityBar = document.querySelector("#analysis-intensity-bar");
 const analysisThemes = document.querySelector("#analysis-themes");
 const analysisInsight = document.querySelector("#analysis-insight");
+const analysisMeta = document.querySelector("#analysis-meta");
 const summaryMode = document.querySelector("#summary-mode");
 const summaryAnchorDate = document.querySelector("#summary-anchor-date");
 const summaryStartDate = document.querySelector("#summary-start-date");
@@ -73,6 +74,7 @@ function renderAnalysis(item) {
     assertElement(analysisCard, "analysis-card").classList.remove("hidden");
     assertElement(analysisDate, "analysis-date").textContent = formatDate(item.date);
     assertElement(analysisEmotion, "analysis-emotion").textContent = item.emotion;
+    assertElement(analysisMeta, "analysis-meta").textContent = `${item.emotion_group} / ${item.emotion_valence} / ${item.emotion_energy}`;
     assertElement(analysisIntensityText, "analysis-intensity-text").textContent = item.intensity.toFixed(2);
     assertElement(analysisIntensityBar, "analysis-intensity-bar").style.width = `${Math.max(0, Math.min(item.intensity, 1)) * 100}%`;
     renderThemeList(assertElement(analysisThemes, "analysis-themes"), item.themes);
@@ -93,6 +95,7 @@ function renderHistory(items) {
         <div class="history-date">${formatDate(item.date)}</div>
         <span class="emotion-pill">${item.emotion}</span>
       </div>
+      <div class="history-date">${item.emotion_group} / ${item.emotion_energy}</div>
       <div class="theme-list">${item.themes.map((theme) => `<span class="theme-chip">${theme}</span>`).join("")}</div>
       <p class="history-insight">${item.insight}</p>
     `;
