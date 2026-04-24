@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindTrace</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">MindTrace</p>
+          <h1>把情绪记录，变成可回看的成长轨迹。</h1>
+          <p class="hero-text">
+            写下一篇日记，立即得到情绪分析；再把多篇记录串起来，看见一周或一月里的状态变化。
+          </p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <span class="stat-label">记录</span>
+            <strong id="entry-count">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">主情绪</span>
+            <strong id="top-emotion">-</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">最近主题</span>
+            <strong id="top-theme">-</strong>
+          </div>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <section class="panel compose-panel">
+          <div class="panel-head">
+            <p class="panel-kicker">Write</p>
+            <h2>记录今天</h2>
+          </div>
+          <form id="diary-form" class="stack-form">
+            <label>
+              日期
+              <input id="diary-date" name="date" type="date" required />
+            </label>
+            <label>
+              内容
+              <textarea
+                id="diary-content"
+                name="content"
+                rows="8"
+                placeholder="写下今天让你印象最深的事、情绪变化，或者你想留给未来自己的几句话。"
+                required
+              ></textarea>
+            </label>
+            <button id="submit-entry" type="submit">分析并保存</button>
+          </form>
+          <p id="form-message" class="hint-text"></p>
+        </section>
+
+        <section class="panel result-panel">
+          <div class="panel-head">
+            <p class="panel-kicker">Reflect</p>
+            <h2>分析结果</h2>
+          </div>
+          <div id="analysis-empty" class="empty-state">
+            提交一篇日记后，这里会显示情绪、主题和洞察。
+          </div>
+          <div id="analysis-card" class="analysis-card hidden">
+            <div class="analysis-topline">
+              <span id="analysis-date" class="analysis-date"></span>
+              <span id="analysis-emotion" class="emotion-pill"></span>
+            </div>
+            <div class="meter-block">
+              <div class="meter-label-row">
+                <span>情绪强度</span>
+                <strong id="analysis-intensity-text">0.00</strong>
+              </div>
+              <div class="meter-track">
+                <div id="analysis-intensity-bar" class="meter-fill"></div>
+              </div>
+            </div>
+            <div class="theme-group">
+              <p>主题</p>
+              <div id="analysis-themes" class="theme-list"></div>
+            </div>
+            <div class="insight-block">
+              <p>洞察</p>
+              <blockquote id="analysis-insight"></blockquote>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel summary-panel">
+          <div class="panel-head">
+            <p class="panel-kicker">Review</p>
+            <h2>阶段总结</h2>
+          </div>
+          <form id="summary-form" class="stack-form compact-form">
+            <label>
+              模式
+              <select id="summary-mode" name="mode">
+                <option value="week">本周</option>
+                <option value="month">本月</option>
+                <option value="custom">自定义</option>
+              </select>
+            </label>
+            <label id="anchor-date-field">
+              锚点日期
+              <input id="summary-anchor-date" name="anchor_date" type="date" />
+            </label>
+            <div id="custom-range-fields" class="range-grid hidden">
+              <label>
+                开始日期
+                <input id="summary-start-date" name="start_date" type="date" />
+              </label>
+              <label>
+                结束日期
+                <input id="summary-end-date" name="end_date" type="date" />
+              </label>
+            </div>
+            <button type="submit">生成总结</button>
+          </form>
+          <div id="summary-empty" class="empty-state">
+            选择一段时间范围后，这里会出现趋势判断和阶段回顾。
+          </div>
+          <div id="summary-card" class="summary-card hidden">
+            <div class="summary-meta">
+              <span id="summary-range"></span>
+              <span id="summary-count"></span>
+            </div>
+            <div class="summary-grid">
+              <div class="summary-stat">
+                <span>平均强度</span>
+                <strong id="summary-intensity"></strong>
+              </div>
+              <div class="summary-stat">
+                <span>主情绪</span>
+                <strong id="summary-emotions"></strong>
+              </div>
+            </div>
+            <div class="summary-section">
+              <p>阶段总结</p>
+              <blockquote id="summary-text"></blockquote>
+            </div>
+            <div class="summary-section">
+              <p>趋势</p>
+              <div id="summary-trend" class="summary-note"></div>
+            </div>
+            <div class="summary-section">
+              <p>重点</p>
+              <ul id="summary-highlights" class="bullet-list"></ul>
+            </div>
+            <div class="summary-section">
+              <p>高频主题</p>
+              <div id="summary-themes" class="theme-list"></div>
+            </div>
+            <div class="summary-section">
+              <p>建议</p>
+              <div id="summary-suggestion" class="summary-note"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel history-panel">
+          <div class="panel-head">
+            <p class="panel-kicker">Archive</p>
+            <h2>最近记录</h2>
+          </div>
+          <div id="history-list" class="history-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/static/main.js"></script>
+  </body>
+</html>
