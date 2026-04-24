@@ -32,6 +32,7 @@ class Settings:
         self.openai_api_key = os.getenv("OPENAI_API_KEY", "")
         self.openai_base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
         self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+        self.database_url = os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'mindtrace.db'}")
 
 
 @lru_cache

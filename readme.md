@@ -18,8 +18,9 @@ MindTrace 想做的是把两者结合起来：
 ## Current Features
 
 当前版本已经支持：
-- 通过 FastAPI 提供日记分析接口
+- 通过 FastAPI 提供日记分析与查询接口
 - 输入一段日记内容，返回情绪、强度、主题和简短洞察
+- 将日记内容和分析结果保存到 SQLite 数据库
 - 使用 `.env` 配置 OpenAI API 信息
 - 通过 Swagger 文档快速调试接口
 
@@ -49,6 +50,8 @@ MindTrace 想做的是把两者结合起来：
 - Pydantic
 - Requests
 - OpenAI API
+- SQLite
+- SQLAlchemy
 
 ## Project Structure
 
@@ -98,6 +101,7 @@ cp .env.example .env
 OPENAI_API_KEY=your_openai_api_key_here
 OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_MODEL=gpt-4o-mini
+DATABASE_URL=sqlite:///./mindtrace.db
 ```
 
 ## Run the App
@@ -132,6 +136,26 @@ uvicorn app.main:app --reload
   "intensity": 0.68,
   "themes": ["开发过程", "调试压力", "成就感"],
   "insight": "这段记录同时包含了受阻时的烦躁和问题解决后的积极反馈，说明进展本身会明显影响情绪状态。"
+}
+```
+
+### History Query
+
+`GET /api/diary?limit=10`
+
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "date": "2026-04-24",
+      "emotion": "mixed",
+      "intensity": 0.68,
+      "themes": ["开发过程", "调试压力", "成就感"],
+      "insight": "这段记录同时包含了受阻时的烦躁和问题解决后的积极反馈，说明进展本身会明显影响情绪状态。",
+      "created_at": "2026-04-24T21:30:00"
+    }
+  ]
 }
 ```
 
