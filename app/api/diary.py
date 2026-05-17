@@ -1,13 +1,18 @@
 from datetime import date as date_type
 from typing import Literal
 
+import logging
+
 from fastapi import Depends, HTTPException, Query
 from fastapi.routing import APIRouter
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.schemas.diary import AnalysisResponse, DiaryListResponse, DiaryRequest, DiarySummaryResponse
 from app.service.diary_service import create_diary, list_diaries, resolve_summary_range, summarize_diary_range
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/api/diary",
@@ -21,7 +26,11 @@ router = APIRouter(
     response_model=AnalysisResponse
 )
 def analyze_diary(req: DiaryRequest, db: Session = Depends(get_db)):
-    return create_diary(db, req)
+    try:
+        return create_diary(db, req)
+    except SQLAlchemyError as exc:
+        logger.error("Database error in analyze_diary: %s", exc)
+        raise HTTPException(status_code=500, detail="保存日记失败，请稍后再试。") from exc
 
 
 @router.get(
@@ -34,7 +43,11 @@ def get_diaries(
     limit: int = Query(default=20, ge=1, le=100, description="返回记录条数"),
     db: Session = Depends(get_db),
 ):
-    return list_diaries(db, limit)
+    try:
+        return list_diaries(db, limit)
+    except SQLAlchemyError as exc:
+        logger.error("Database error in get_diaries: %s", exc)
+        raise HTTPException(status_code=500, detail="查询日记失败，请稍后再试。") from exc
 
 
 @router.get(
@@ -60,4 +73,8 @@ def get_diary_summary(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
-    return summarize_diary_range(db, resolved_start_date, resolved_end_date)
+    try:
+        return summarize_diary_range(db, resolved_start_date, resolved_end_date)
+    except SQLAlchemyError as exc:
+        logger.error("Database error in get_diary_summary: %s", exc)
+        raise HTTPException(status_code=500, detail="生成总结失败，请稍后再试。") from exc

@@ -184,10 +184,22 @@ function toggleSummaryFields() {
 }
 
 async function requestJson<T>(url: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(url, options);
+  let response: Response;
+  try {
+    response = await fetch(url, options);
+  } catch {
+    throw new Error("网络连接失败，请检查网络后重试。");
+  }
+
   if (!response.ok) {
-    const detail = await response.text();
-    throw new Error(detail || "请求失败");
+    let detail = "";
+    try {
+      const body = await response.json() as { detail?: string };
+      detail = body.detail || "";
+    } catch {
+      // response body is not JSON
+    }
+    throw new Error(detail || `请求失败 (HTTP ${response.status})`);
   }
 
   return response.json() as Promise<T>;

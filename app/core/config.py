@@ -1,38 +1,25 @@
 from __future__ import annotations
 
-import os
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 BASE_DIR = Path(__file__).resolve().parents[2]
-ENV_PATH = BASE_DIR / ".env"
 
 
-def load_dotenv() -> None:
-    if not ENV_PATH.exists():
-        return
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=BASE_DIR / ".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
-    for raw_line in ENV_PATH.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-
-        key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-
-        if key and key not in os.environ:
-            os.environ[key] = value
-
-
-class Settings:
-    def __init__(self) -> None:
-        load_dotenv()
-        self.openai_api_key = os.getenv("OPENAI_API_KEY", "")
-        self.openai_base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
-        self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-        self.database_url = os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'mindtrace.db'}")
+    openai_api_key: str = ""
+    openai_base_url: str = "https://api.openai.com/v1"
+    openai_model: str = "gpt-4o-mini"
+    database_url: str = f"sqlite:///{BASE_DIR / 'mindtrace.db'}"
 
 
 @lru_cache

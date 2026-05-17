@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import Any
 
 import requests
 
 from app.core.config import get_settings
+
+logger = logging.getLogger(__name__)
 
 
 EMOTION_TAXONOMY = {
@@ -64,6 +67,8 @@ EMOTION_ALIASES = {
     "孤独": "lonely",
     "失望": "disappointed",
     "内疚": "guilty",
+    "自责": "guilty",
+    "后悔": "guilty",
     "复杂": "mixed",
 }
 
@@ -213,7 +218,8 @@ def analyze_text(content: str) -> dict[str, Any]:
         result = response.json()
         text = result["choices"][0]["message"]["content"]
         return _parse_response_text(text)
-    except (requests.RequestException, KeyError, ValueError, TypeError, json.JSONDecodeError):
+    except (requests.RequestException, KeyError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        logger.error("AI analysis failed: %s", exc)
         return _default_response("分析服务暂时不可用，请稍后再试。")
 
 
@@ -246,5 +252,6 @@ def summarize_diaries(content: str) -> dict[str, Any]:
         result = response.json()
         text = result["choices"][0]["message"]["content"]
         return _parse_summary_response_text(text)
-    except (requests.RequestException, KeyError, ValueError, TypeError, json.JSONDecodeError):
+    except (requests.RequestException, KeyError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        logger.error("AI summary failed: %s", exc)
         return _default_summary_response("阶段总结服务暂时不可用，请稍后再试。")
