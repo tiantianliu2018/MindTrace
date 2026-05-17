@@ -3,6 +3,12 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, field_validator
 
+
+class EmotionItem(BaseModel):
+    emotion: str = Field(..., json_schema_extra={"example": "anxious"}, description="情绪标签")
+    proportion: float = Field(..., ge=0, le=1, json_schema_extra={"example": 0.6}, description="占比（0-1）")
+
+
 class DiaryRequest(BaseModel):
     date: date_type = Field(..., json_schema_extra={"example": "2026-04-22"}, description="日记日期")
     content: str = Field(
@@ -20,16 +26,29 @@ class DiaryRequest(BaseModel):
             raise ValueError("日期不能是未来日期")
         return v
 
+
 class AnalysisResponse(BaseModel):
     id: int = Field(..., json_schema_extra={"example": 1}, description="记录 ID")
     date: date_type = Field(..., json_schema_extra={"example": "2026-04-22"}, description="日记日期")
-    emotion: str = Field(..., json_schema_extra={"example": "frustrated"}, description="情绪类型")
+    emotion: str = Field(..., json_schema_extra={"example": "frustrated"}, description="主导情绪")
     emotion_group: str = Field(..., json_schema_extra={"example": "negative"}, description="情绪大类")
     emotion_valence: str = Field(..., json_schema_extra={"example": "unpleasant"}, description="情绪愉悦度")
     emotion_energy: str = Field(..., json_schema_extra={"example": "high"}, description="情绪能量水平")
     intensity: float = Field(..., json_schema_extra={"example": 0.7}, description="情绪强度（0-1）")
     themes: list[str] = Field(..., json_schema_extra={"example": ["工作压力"]}, description="主题标签")
     insight: str = Field(..., json_schema_extra={"example": "情绪来源于未解决问题"}, description="分析洞察")
+    emotions: list[EmotionItem] = Field(
+        default_factory=list,
+        json_schema_extra={"example": [{"emotion": "frustrated", "proportion": 0.7}, {"emotion": "hopeful", "proportion": 0.3}]},
+        description="复合情绪分布",
+    )
+    trigger: str = Field(default="", json_schema_extra={"example": "连续调试失败"}, description="情绪触发因素")
+    physical_state: str = Field(default="", json_schema_extra={"example": "精力充沛"}, description="身体/精力状态")
+    compared_to_previous: str = Field(
+        default="",
+        json_schema_extra={"example": "相比昨天，今天的焦虑感有所缓解"},
+        description="与最近记录的纵向对比",
+    )
     created_at: datetime = Field(..., description="创建时间")
 
 

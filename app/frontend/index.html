@@ -81,13 +81,26 @@
                 <div id="analysis-intensity-bar" class="meter-fill"></div>
               </div>
             </div>
+            <div id="analysis-emotions" class="emotion-bar-list"></div>
             <div class="theme-group">
               <p>主题</p>
               <div id="analysis-themes" class="theme-list"></div>
             </div>
+            <div id="analysis-trigger-block" class="info-row hidden">
+              <span class="info-label">触发因素</span>
+              <span id="analysis-trigger"></span>
+            </div>
+            <div id="analysis-physical-block" class="info-row hidden">
+              <span class="info-label">身体状态</span>
+              <span id="analysis-physical-state"></span>
+            </div>
             <div class="insight-block">
               <p>洞察</p>
               <blockquote id="analysis-insight"></blockquote>
+            </div>
+            <div id="analysis-compare-block" class="insight-block hidden">
+              <p>纵向对比</p>
+              <blockquote id="analysis-compared"></blockquote>
             </div>
           </div>
         </section>
@@ -163,6 +176,53 @@
           </div>
         </section>
 
+        <section class="panel chart-panel">
+          <div class="panel-head">
+            <p class="panel-kicker">Visualize</p>
+            <h2>情绪趋势</h2>
+          </div>
+          <div class="chart-controls">
+            <select id="chart-days">
+              <option value="7">最近 7 天</option>
+              <option value="14">最近 14 天</option>
+              <option value="30" selected>最近 30 天</option>
+              <option value="90">最近 90 天</option>
+            </select>
+          </div>
+          <div id="chart-empty" class="empty-state">
+            记录更多日记后，这里会出现情绪趋势图。
+          </div>
+          <div id="chart-area" class="chart-area hidden">
+            <div class="chart-canvas-wrap">
+              <canvas id="intensity-chart"></canvas>
+            </div>
+            <div class="chart-canvas-wrap chart-canvas-half">
+              <canvas id="distribution-chart"></canvas>
+            </div>
+          </div>
+          <div style="margin-top: 16px; display: flex; gap: 10px;">
+            <a href="/api/diary/export?format=md" class="export-link" target="_blank">导出 Markdown</a>
+            <a href="/api/diary/export?format=json" class="export-link" target="_blank">导出 JSON</a>
+          </div>
+        </section>
+
+        <section class="panel calendar-panel">
+          <div class="panel-head">
+            <p class="panel-kicker">Calendar</p>
+            <h2>情绪热力图</h2>
+          </div>
+          <div class="chart-controls">
+            <input id="calendar-month" type="month" />
+          </div>
+          <div id="calendar-area" class="calendar-grid"></div>
+          <div class="calendar-legend">
+            <span class="legend-dot" style="background:#aaa"></span> 无记录
+            <span class="legend-dot" style="background:#e7bb6f"></span> 积极
+            <span class="legend-dot" style="background:#7eb8b0"></span> 中性
+            <span class="legend-dot" style="background:#c4683a"></span> 消极
+          </div>
+        </section>
+
         <section class="panel history-panel">
           <div class="panel-head">
             <p class="panel-kicker">Archive</p>
@@ -173,6 +233,7 @@
       </main>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script type="module" src="/static/main.js"></script>
   </body>
 </html>
